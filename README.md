@@ -1,4 +1,4 @@
-#Terminal heapsort visualizer in JS
+# Terminal heapsort visualizer in JS
 
 This is a handy heapsort visualizer
 
@@ -10,7 +10,7 @@ To change colors to high contrast, `node exec.js 1`: you can pass literally anyt
 
 Change array length in `exec.js`: I recommend powers of 2 minus 1 e.g. 15, 31, 63, but any will work.
 
-#TODO:
+# TODO:
 
 -benchmark file
 
@@ -18,6 +18,6 @@ Change array length in `exec.js`: I recommend powers of 2 minus 1 e.g. 15, 31, 6
 
 -Improve argument handling
 
-#SAMPLE OUTPUT:
+# SAMPLE OUTPUT:
 
 ![Sample output](./sample.jpg)
