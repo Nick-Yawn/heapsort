@@ -2,6 +2,9 @@ const heapsort = require('./heapsort');
 const shuffle = require('./shuffle');
 
 const ARRAY_LENGTH = 15;
+const VERBOSE = true;
+const highContrast = process.argv[2] ? true : false;
+console.log(highContrast);
 
 // This function checks not only that the array is sorted, but that no values have been duplicated
 const isSorted = array => {
@@ -26,7 +29,7 @@ shuffle(arr);
 const str = `SORTED ${ARRAY_LENGTH} values:`;
 
 console.time(str);
-heapsort(arr, true); // second argument is verbose
+heapsort(arr, VERBOSE, highContrast);
 console.timeEnd(str);
 
 console.log(`isSorted: ${isSorted(arr)}`);

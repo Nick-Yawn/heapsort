@@ -1,4 +1,4 @@
-const heapsort = (array, verbose = false) => {
+const heapsort = (array, verbose = false, highContrast = false) => {
   
   // first, we need to heap-order the array.
   // heaps are interesting in that they are arrays represented as n-trees.
@@ -77,18 +77,19 @@ const heapsort = (array, verbose = false) => {
     }               // we'll check its parent node on a different run
   }
 
-  //heap-order
+  // STEP 1: HEAP-ORDER
   for( let i = Math.floor(length / 2); i >= 1; i-- ){
     if(verbose){ 
       swappedIndices.clear();
       console.log(`sinking ${arrayBase1[i]}`);
     }
     sinkb1(i);
-    if(verbose) printHeap(array, swappedIndices);
+    if(verbose) printHeap(array, swappedIndices, highContrast);
   }
 
   if(verbose) console.log(`ARRAY IS NOW HEAP-ORDERED: ${checkHeapOrder(array)}\n`);
 
+  // STEP 2: SORT
   while( length > 1 ){
     if(verbose){ 
       swappedIndices.clear();
@@ -96,7 +97,7 @@ const heapsort = (array, verbose = false) => {
     }
     swap( arrayBase1, 1, length-- );
     sinkb1( 1 );
-    if(verbose) printHeap(array, swappedIndices);
+    if(verbose) printHeap(array, swappedIndices, highContrast);
   }
 
   if(verbose) console.log(array.join(' '));
@@ -111,7 +112,7 @@ const checkHeapOrder = arr => {
   return true;
 }
 
-const printHeap = (arr, swappedIndices) => {
+const printHeap = (arr, swappedIndices, highContrast) => {
   // We're stringbuilding.
   let string = '';
   const length = arr.length;
@@ -134,7 +135,8 @@ const printHeap = (arr, swappedIndices) => {
   
   swappedValueStrings.forEach( subString => {
     let re = new RegExp(` ${subString} `);
-    string = string.replace( re, ` \x1b[32m${subString}\x1b[0m ` );
+    let terminalColorStr = highContrast ? '\x1b[47m\x1b[30m' : '\x1b[32m' 
+    string = string.replace( re, ` ${terminalColorStr + subString}\x1b[0m ` );
   });
 
   console.log(string);
