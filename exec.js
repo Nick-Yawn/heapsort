@@ -4,7 +4,6 @@ const shuffle = require('./shuffle');
 const ARRAY_LENGTH = 15;
 const VERBOSE = true;
 const highContrast = process.argv[2] ? true : false;
-console.log(highContrast);
 
 // This function checks not only that the array is sorted, but that no values have been duplicated
 const isSorted = array => {

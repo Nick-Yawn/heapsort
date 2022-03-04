@@ -33,13 +33,12 @@ const heapsort = (array, verbose = false, highContrast = false) => {
   
   // VARIABLES WITH SUFFIX 'b1' HOLD 1-INDEXED VALUES AND MUST BE CORRECTED
   // BEFORE THEY ARE USED TO ACCESS THE ARRAY
-  // TOO BAD JS DOESN'T HAVE AN INDEX 1 FLAG 
-
+  // TOO BAD JS DOESN'T HAVE AN INDEX 1 FLAG
   // Instead, we can use a proxy! check them out on MDN!
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
 
   let length = array.length;
-  let swappedIndices = new Set();
+  let swappedIndices = new Set(); // this is used for coloring terminal output
 
   // this handler is an object with specific keys, and functions for its values
   // We could do data validation, if we wanted 
@@ -65,7 +64,6 @@ const heapsort = (array, verbose = false, highContrast = false) => {
   const sinkb1 = indexb1 => {
     if(verbose)swappedIndices.add(indexb1); 
     while( 2 * indexb1 <= length ){
-      //if(verbose) console.log(`sinking ${arrayBase1[indexb1]} at ${indexb1}`);
       let childIndexb1 = 2 * indexb1; // this should make sense, see line 20
       if( childIndexb1 < length && arrayBase1[childIndexb1] < arrayBase1[childIndexb1 + 1] )
         childIndexb1++; // we should swap with the larger child, if there is one
@@ -135,8 +133,8 @@ const printHeap = (arr, swappedIndices, highContrast) => {
   
   swappedValueStrings.forEach( subString => {
     let re = new RegExp(` ${subString} `);
-    let terminalColorStr = highContrast ? '\x1b[47m\x1b[30m' : '\x1b[32m' 
-    string = string.replace( re, ` ${terminalColorStr + subString}\x1b[0m ` );
+    let terminalColorStr = highContrast ? '\x1b[47m\x1b[30m' : '\x1b[32m' // these are escape strings which change the subsequent colors of the terminal 
+    string = string.replace( re, ` ${terminalColorStr + subString}\x1b[0m ` ); // fun fact: browser console output can take CSS rules
   });
 
   console.log(string);
