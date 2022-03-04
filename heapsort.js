@@ -35,24 +35,43 @@ const heapsort = (array, verbose = false) => {
   // BEFORE THEY ARE USED TO ACCESS THE ARRAY
   // TOO BAD JS DOESN'T HAVE AN INDEX 1 FLAG 
 
-  let length = array.length;
+  // Instead, we can use a proxy! check them out on MDN!
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
 
-  // helper function for swapping array values that takes 1-indexed indices
-  const swapb1 = (ib1, jb1) => {
-    let temp = array[ib1 - 1];
-    array[ib1 - 1] = array[jb1 - 1];
-    array[jb1 - 1] = temp;
+  let length = array.length;
+  let swappedIndices = new Set();
+
+  // this handler is an object with specific keys, and functions for its values
+  // We could do data validation, if we wanted 
+  const handler = {
+    get: (target, prop, receiver) => {
+      return target[prop - 1] 
+    },
+    set: (target, prop, value, receiver) => {
+      target[prop - 1] = value;
+    }
+  };
+
+  const arrayBase1 = new Proxy(array, handler);
+
+  // helper function for swapping array values — base agnostic
+  const swap = (arr, i, j) => {
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
   }
 
   // helper function for fixing the heap
   const sinkb1 = indexb1 => {
+    if(verbose)swappedIndices.add(indexb1); 
     while( 2 * indexb1 <= length ){
-      if(verbose) console.log(`sinking ${array[indexb1-1]} at ${indexb1}`);
+      //if(verbose) console.log(`sinking ${arrayBase1[indexb1]} at ${indexb1}`);
       let childIndexb1 = 2 * indexb1; // this should make sense, see line 20
-      if( childIndexb1 < length && array[childIndexb1-1] < array[childIndexb1] ) 
+      if( childIndexb1 < length && arrayBase1[childIndexb1] < arrayBase1[childIndexb1 + 1] )
         childIndexb1++; // we should swap with the larger child, if there is one
-      if( array[indexb1-1] < array[childIndexb1-1] ){
-        swapb1(indexb1, childIndexb1);
+      if( arrayBase1[indexb1] < arrayBase1[childIndexb1] ){
+        swap(arrayBase1, indexb1, childIndexb1);
+        if(verbose)swappedIndices.add(childIndexb1);
         indexb1 = childIndexb1;
       } else break; // if it's heap-ordered w/r/t its children, we're done.
     }               // we'll check its parent node on a different run
@@ -60,17 +79,24 @@ const heapsort = (array, verbose = false) => {
 
   //heap-order
   for( let i = Math.floor(length / 2); i >= 1; i-- ){
+    if(verbose){ 
+      swappedIndices.clear();
+      console.log(`sinking ${arrayBase1[i]}`);
+    }
     sinkb1(i);
-    if(verbose) printHeap(array);
+    if(verbose) printHeap(array, swappedIndices);
   }
-  
-  if(verbose) console.log(`ARRAY IS HEAP-ORDERED: ${checkHeapOrder(array)}\n`);
-  
+
+  if(verbose) console.log(`ARRAY IS NOW HEAP-ORDERED: ${checkHeapOrder(array)}\n`);
+
   while( length > 1 ){
-    if(verbose) console.log(`Swapping ${array[0]} to ${length}`);
-    swapb1( 1, length-- );
+    if(verbose){ 
+      swappedIndices.clear();
+      console.log(`Swapping ${arrayBase1[1]} with ${arrayBase1[length]} and sinking ${arrayBase1[length]}\n`);
+    }
+    swap( arrayBase1, 1, length-- );
     sinkb1( 1 );
-    if(verbose) printHeap(array);
+    if(verbose) printHeap(array, swappedIndices);
   }
 
   if(verbose) console.log(array.join(' '));
@@ -85,7 +111,7 @@ const checkHeapOrder = arr => {
   return true;
 }
 
-const printHeap = (arr) => {
+const printHeap = (arr, swappedIndices) => {
   // We're stringbuilding.
   let string = '';
   const length = arr.length;
@@ -94,13 +120,22 @@ const printHeap = (arr) => {
     numlayers++;
 
   for( let i = 0; i <= numlayers; i++ ){
-    string += arr.slice( 2 ** i - 1, 2 ** (i + 1) - 1).map( n => {
+    string += ' ' + arr.slice( 2 ** i - 1, 2 ** (i + 1) - 1).map( n => {
       let subspace = spaces( 2 ** (numlayers - i - 1) - 1 );
       let unit = (n < 10 ? ` ${n}` : n );
       return subspace + unit + subspace;
     }).join('  ') 
-    + '\n';  
+    + ' \n';  
   } 
+
+  // I want to highlight swapped values
+  const swappedValues = Array.from(swappedIndices).map( i => arr[i - 1]);
+  const swappedValueStrings = swappedValues.map( n => n < 10 ? ` ${n}` : n.toString() );
+  
+  swappedValueStrings.forEach( subString => {
+    let re = new RegExp(` ${subString} `);
+    string = string.replace( re, ` \x1b[32m${subString}\x1b[0m ` );
+  });
 
   console.log(string);
 }

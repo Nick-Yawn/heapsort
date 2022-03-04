@@ -1,7 +1,7 @@
 const heapsort = require('./heapsort');
 const shuffle = require('./shuffle');
 
-const ARRAY_LENGTH = 63;
+const ARRAY_LENGTH = 15;
 
 // This function checks not only that the array is sorted, but that no values have been duplicated
 const isSorted = array => {
