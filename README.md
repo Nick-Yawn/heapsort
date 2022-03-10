@@ -1,6 +1,6 @@
 # Terminal heapsort visualizer in JS
 
-This is a handy heapsort visualizer
+This is a handy heapsort visualizer. A brief explanation of heaps can be found in `heapsort.js`.
 
 As heapsort requires many lines to visualize, you may need to increase your terminal height. On WSL2 / Ubuntu, right click title bar > properties > layout > screen buffer size > height. Verbose heapsort of an array length 63 prints 905 lines 
 
